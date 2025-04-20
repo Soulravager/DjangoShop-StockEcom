@@ -1,0 +1,410 @@
+{% extends 'app/base.html' %}
+
+{% load static %}
+
+{% block title %}{{ product.title }}{% endblock title %}
+
+{% block main-content %}
+<div class="container py-5">
+  <!-- Breadcrumb navigation -->
+  <nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/" class="text-decoration-none">Home</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'category' product.category %}" class="text-decoration-none">
+        {% if product.category == 'HO' %}Lap Tops
+        {% elif product.category == 'HS' %}Mobile Phone
+        {% elif product.category == 'HM' %}Tablet
+        {% elif product.category == 'HC' %}Smartwatch
+        {% elif product.category == 'SH' %}Camera
+        {% elif product.category == 'HB' %}ear pods
+        {% else %}Products{% endif %}
+      </a></li>
+      <li class="breadcrumb-item active" aria-current="page">{{product.title}}</li>
+    </ol>
+  </nav>
+
+  <div class="row">
+    <!-- Product image section -->
+    <div class="col-lg-6 mb-5">
+      <div class="card border-0 shadow-sm">
+        <div class="position-relative">
+          <!-- Discount badge if product is on sale -->
+          {% if product.discounted_price < product.selling_price %}
+          <div class="position-absolute top-0 end-0 bg-danger text-white m-3 px-3 py-2 rounded-pill fs-6 fw-bold shadow-sm">
+            {% with discount=product.selling_price|floatformat:0|slugify|add:"0"|stringformat:"i" %}
+            {% with discounted=product.discounted_price|floatformat:0|slugify|add:"0"|stringformat:"i" %}
+            {% with percentage=discount|add:"-"|add:discounted|add:"*100/"|add:discount %}
+            {{ percentage|floatformat:0 }}% OFF
+            {% endwith %}
+            {% endwith %}
+            {% endwith %}
+          </div>
+          {% endif %}
+          
+          <div class="product-image p-4">
+            <img src="{{product.product_image.url}}" class="img-fluid rounded product-img" alt="{{product.title}}">
+          </div>
+        </div>
+        
+        <!-- Thumbnail navigation could be added here if there were multiple images -->
+        <div class="card-footer bg-white border-0 p-3">
+          <div class="d-flex justify-content-center">
+            <span class="text-muted">
+              <i class="fas fa-share-alt me-1"></i> Share:
+            </span>
+            <a href="#" class="ms-2 text-primary"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" class="ms-2 text-info"><i class="fab fa-twitter"></i></a>
+            <a href="#" class="ms-2 text-danger"><i class="fab fa-pinterest"></i></a>
+            <a href="#" class="ms-2 text-success"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Product details section -->
+    <div class="col-lg-6">
+      <div class="product-details ps-lg-4">
+        <!-- Product title -->
+        <h1 class="product-title mb-3 fw-bold">{{product.title}}</h1>       
+
+      <!-- Where you want to show stars -->
+      <span class="ms-2 text-primary">Rating:<span id="star-container"></span>
+      (<span id="rating-value">{{ product.average_rating|floatformat:1 }}</span>/5)
+      </span>
+
+
+        </div>
+        
+        <!-- Price -->
+        <div class="product-price mb-4">
+          <h2 class="text-danger fw-bold mb-0">₹{{product.discounted_price}}/-</h2>
+          {% if product.discounted_price < product.selling_price %}
+          <span class="text-muted text-decoration-line-through fs-5">₹{{product.selling_price}}/-</span>
+          {% endif %}
+        </div>
+        
+        <!-- Availability -->
+        <div class="product-stock mb-4">
+          {% if product.stock > 0 %}
+            <span class="badge bg-success p-2">
+              <i class="fas fa-check-circle me-1"></i> In Stock
+            </span>
+            <span class="text-muted ms-2">Ships within 2-3 business days</span>
+          {% else %}
+            <span class="badge bg-danger p-2">
+              <i class="fas fa-times-circle me-1"></i> Out of Stock
+            </span>
+          {% endif %}
+        </div>
+        
+        
+        <!-- Divider -->
+        <hr class="my-4">
+        
+        <!-- Product description -->
+        <div class="product-description mb-4">
+          <h4 class="fw-bold mb-3">Product Features</h4>
+          <div class="feature-content fs-5">
+            {{product.description|linebreaks}}
+          </div>
+        </div>
+        
+        <!-- Quantity selector could be added here -->
+        
+        <!-- Action buttons -->
+        <div class="product-actions d-flex flex-wrap gap-2 mt-4">
+          <form action="/add-to-cart" class="d-inline">
+            <input type="hidden" name="prod_id" value="{{product.id}}" />
+            <button type="submit" class="btn btn-primary btn-lg">
+              <i class="fas fa-cart-plus me-2"></i>Add to Cart
+            </button>
+          </form>
+          
+          <form action="{% url 'buy_now' %}" method="post" class="d-inline">
+            {% csrf_token %}
+            <input type="hidden" name="prod_id" value="{{ product.id }}">
+            <button type="submit" class="btn btn-warning btn-lg">
+              <i class="fas fa-bolt me-2"></i>Buy Now
+            </button>
+          </form>
+          
+          
+          {% if wishlist %}
+          <a pid="{{ product.id }}" class="minus-wishlist btn btn-danger btn-lg">
+            <i class="fas fa-heart"></i>
+          </a>
+        {% else %}
+          <a pid="{{ product.id }}" class="plus-wishlist btn btn-outline-danger btn-lg">
+            <i class="far fa-heart"></i>
+          </a>
+        {% endif %}
+        
+        </div>
+        
+        <!-- Additional info sections -->
+        <div class="additional-info mt-5">
+          <div class="accordion" id="productAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  <i class="fas fa-truck me-2"></i> Shipping & Returns
+                </button>
+              </h2>
+              <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#productAccordion">
+                <div class="accordion-body">
+                  <p>Free shipping on orders over ₹499. Standard delivery in 2-3 business days.</p>
+                  <p>
+                    Returns accepted within 30 days of delivery. 
+                    See our 
+                    <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#returnPolicyModal">return policy</a> 
+                    for details.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div class="accordion-item">
+              <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  <i class="fas fa-leaf me-2"></i> Warranty 
+                </button>
+              </h2>
+              <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#productAccordion">
+                <div class="accordion-body">
+                  <p>Our product {{product.title}} come with a warranty backed by the one and only Vishnu’s Agency—because if you're gonna trust anyone, it should be someone named Vishnu.
+
+                    Please note:
+                    Once you buy the product, it officially belongs to you, not us, not Electra, not your neighbor—you. That means returning it is not an option, unless you're returning it to your own shelf or the void of buyer’s remorse.
+                    
+                    We’re not responsible for what happens after the purchase. Whether you drop it, lose it, or decide it’s haunted—that’s between you and the product now. Don’t call us, we’ll call... actually, we won’t call.
+                    
+                    Thanks for choosing our services (and reading this). Warranty claims are fun! (Just kidding, they're not.)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+
+
+        <!-- SHOW REV -->
+        <hr style="border: 1px solid #eee; margin: 20px 0;">
+        
+        <h3 style="color: #333; margin-bottom: 15px;">Reviews</h3>
+        {% for review in reviews %}
+          <div style="margin-bottom: 15px; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; background-color: white;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <strong style="color: #333;">{{ review.user.username }}</strong>
+              <span style="color: #f39c12;">{{ review.rating }} ⭐</span>
+            </div>
+            <small style="color: #777;">{{ review.created_at|date:"M d, Y" }}</small>
+            <p style="color: #555; margin-top: 10px;">{{ review.review_text }}</p>
+          </div>
+        {% empty %}
+          <p style="color: #777;">No reviews yet. Be the first to review!</p>
+        {% endfor %}
+
+
+
+        <!-- SUB<IT REV -->
+        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">
+          {% if user.is_authenticated %}
+            <h3 style="color: #333; margin-bottom: 15px;">
+              {% if form.instance.pk %}Edit Your Review{% else %}Write a Review{% endif %}
+            </h3>
+            <form method="post" action="{% url 'submit_review' product.id %}">
+              {% csrf_token %}
+              <div style="margin-bottom: 15px;">
+                <div class="star-rating" style="margin-bottom: 1  5px;">
+                  {% for i in "54321" %}
+                    <input type="radio" id="star{{ i }}" name="rating" value="{{ i }}" {% if form.rating.value == i %}checked{% endif %}>
+                    <label for="star{{ i }}">&#9733;</label>
+                  {% endfor %}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                  <textarea name="review_text"
+                    rows="4"
+                    placeholder="Write your review..."
+                    style="
+                      width: 100%;
+                      padding: 12px 15px;
+                      border: 1px solid #ccc;
+                      border-radius: 8px;
+                      font-size: 16px;
+                      resize: vertical;
+                      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+                      transition: border-color 0.3s, box-shadow 0.3s;
+                    "
+                    onfocus="this.style.borderColor='#4CAF50'; this.style.boxShadow='0 0 5px rgba(76, 175, 80, 0.5)'"
+                    onblur="this.style.borderColor='#ccc'; this.style.boxShadow='inset 0 1px 3px rgba(0, 0, 0, 0.1)'"
+                  >{{ form.review_text.value }}</textarea>
+                </div>
+                
+                
+              </div>
+              <button type="submit" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+                {% if form.instance.pk %}Update{% else %}Submit{% endif %}
+              </button>
+            </form>
+          {% else %}
+            <p style="color: #777;">
+              <a href="{% url 'login' %}" style="color: #007bff; text-decoration: none;">Log in</a> to write a review.
+            </p>
+          {% endif %}
+
+          <style>
+            .star-rating {
+              direction: rtl;
+              display: inline-flex;
+              font-size: 44px; /**TOO INCREASE STAR SIZE */
+            }
+          
+            .star-rating input {
+              display: none;
+            }
+          
+            .star-rating label {
+              color: #ccc;
+              cursor: pointer;
+              transition: color 0.2s;
+            }
+          
+            .star-rating input:checked ~ label,
+            .star-rating label:hover,
+            .star-rating label:hover ~ label {
+              color: #f5b301;
+            }
+          </style>
+          
+          
+
+        </div>
+        
+
+
+        
+      </div>
+    </div>
+  </div>
+  
+  <!-- Related products section could be added here -->
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="returnPolicyModal" tabindex="-1" aria-labelledby="returnPolicyLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="returnPolicyLabel">Return Policy (But Like, Not Really)</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>We proudly offer a <strong>100% no-return</strong> return policy.</p>
+        <p>That’s right—once the product leaves our mystical warehouse , it embarks on a lifelong journey with you. It has a new home, a new owner, and hopefully a cozy shelf to rest on. 🏡</p>
+        <p><strong>Returns are strictly forbidden</strong> under the following totally reasonable circumstances:</p>
+        <ul>
+          <li>You changed your mind. (We didn’t change ours.)</li>
+          <li>You used it once and now it “feels weird.”</li>
+          <li>You summoned dark forces and it didn’t work as a ritual object.</li>
+          <li>Your dog didn’t like it.</li>
+          <li>Your superior asked you to read this.</li>
+        </ul>
+        <p>We don’t do returns, exchanges, or vibes. Once it’s yours, it’s yours forever. Like a cursed artifact from an ancient tomb—but with fewer consequences (probably).</p>
+        <p>If you <em>still</em> think you can return it, kindly take a number, stand in line, and wait for us to care. <strong>Spoiler:</strong> the line is imaginary.</p>
+        <p>Thanks for shopping with us. You're stuck now. 💖</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Got It</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<style>
+  /* Product image styling */
+  .product-img {
+    transition: transform 0.3s ease;
+  }
+  
+  .product-image:hover .product-img {
+    transform: scale(1.05);
+  }
+  
+  /* Product title typography */
+  .product-title {
+    font-family: 'Georgia', serif;
+    font-size: 2.5rem;
+    line-height: 1.2;
+  }
+  
+  /* Button styling */
+  .btn-primary, .btn-warning, .btn-danger, .btn-outline-danger {
+    border-radius: 4px;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary:hover, .btn-warning:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  /* Feature content styling */
+  .feature-content {
+    font-family: 'Rajdhani', sans-serif;
+    line-height: 1.6;
+  }
+  
+  /* Accordion styling */
+  .accordion-button:not(.collapsed) {
+    background-color: rgba(13, 110, 253, 0.1);
+    color: #0d6efd;
+  }
+  
+  .accordion-button:focus {
+    box-shadow: none;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 992px) {
+    .product-title {
+      font-size: 2rem;
+    }
+    
+    .product-details {
+      padding-left: 0;
+      margin-top: 2rem;
+    }
+  }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const rating = parseFloat(document.getElementById("rating-value").innerText);
+    const starContainer = document.getElementById("star-container");
+
+    let fullStars = Math.floor(rating);
+    let halfStar = (rating - fullStars) >= 0.5 ? 1 : 0;
+    let emptyStars = 5 - fullStars - halfStar;
+
+    // Add full stars
+    for (let i = 0; i < fullStars; i++) {
+      starContainer.innerHTML += '<i class="fas fa-star text-warning"></i>';
+    }
+
+    // Add half star
+    if (halfStar) {
+      starContainer.innerHTML += '<i class="fas fa-star-half-alt text-warning"></i>';
+    }
+
+    // Add empty stars
+    for (let i = 0; i < emptyStars; i++) {
+      starContainer.innerHTML += '<i class="far fa-star text-warning"></i>';
+    }
+  });
+</script>
+{% endblock main-content %}

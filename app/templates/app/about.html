@@ -1,0 +1,349 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %} About Dairy Daily  {% endblock title %}
+
+{% block head %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<style>
+    /* Banner Text Overlay Styles */
+    .banner-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding-left: 10%;
+        color: white;
+        text-align: left;
+        z-index: 10;
+        background: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.1) 100%);
+    }
+
+    .banner-text-container {
+        max-width: 600px;
+    }
+
+    .banner-title {
+        font-size: 4.5rem;
+        font-weight: 800;
+        line-height: 1.1;
+        text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+        margin-bottom: 1rem;
+        color: white;
+    }
+
+    .banner-subtitle {
+        font-size: 1.6rem;
+        margin-top: 10px;
+        text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
+        line-height: 1.4;
+        font-weight: 300;
+    }
+
+    /* Section Styles */
+    .section-title {
+        position: relative;
+        padding-bottom: 15px;
+        margin-bottom: 25px;
+        color: #333;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background-color: #088f8f;
+    }
+
+    .centered-title::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    /* Card Styles */
+    .content-card {
+        border-radius: 8px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        background-color: #f9f7f5;
+        padding: 2.5rem;
+        height: 100%;
+    }
+
+    .content-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+    }
+
+    /* Button Styles */
+    .btn-primary {
+        background-color: #088f8f;
+        border-color: #088f8f;
+        border-radius: 30px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #614936;
+        border-color: #614936;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(123, 92, 67, 0.3);
+    }
+
+    /* Image Styles */
+    .img-container {
+        overflow: hidden;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    }
+
+    .feature-image {
+        transition: transform 0.5s ease;
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+    }
+
+    .img-container:hover .feature-image {
+        transform: scale(1.03);
+    }
+
+    /* Animation classes */
+    .anim-element {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .anim-element.revealed {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    /* Typography */
+    p {
+        color: #555;
+        line-height: 1.8;
+    }
+
+    .lead {
+        font-size: 1.2rem;
+        font-weight: 400;
+        color: #333;
+    }
+
+    /* Accent Elements */
+    .accent-bg {
+        background-color: #f9f4f0;
+    }
+
+    .quote-block {
+        font-style: italic;
+        padding: 2rem;
+        border-left: 4px solid #088f8f;
+        background-color: #fff;
+        margin: 2rem 0;
+    }
+</style>
+{% endblock %}
+
+
+{% block main-content %}
+{% include 'app/load.html' %}
+<div class="container py-5">
+    <div class="row align-items-center mb-5 py-4">
+        <div class="col-lg-6 mb-4 mb-lg-0 anim-element" id="story-image">
+            <div class="img-container">
+                <img src="{% static 'images/about.png' %}" alt="About  Dairy Daily" class="feature-image">
+            </div>
+        </div>
+        <div class="col-lg-6 anim-element" id="story-text">
+            <h2 class="section-title fw-bold" id="our-story-heading">Our Story</h2>
+            <p class="lead mb-4">
+                At Dairy Daily , our journey began with a simple yet powerful vision: to unlock the secret to naturally sourced and high-quality milk product's for everyone.
+            </p>
+            <p class="mb-3">
+                Inspired by the legendary tale of Dairy Daily and her nourishing essence, we set out to create a milk stock line that embodies purity, richness, and wholesome goodness.
+            </p>
+            <p>
+                We believe that the foundation of a healthy diet starts with the best nature can offer, and our milk product's are a testament to that belief.
+            </p>
+            <div class="quote-block mt-4">
+                "Nature holds the key to wholesome nourishment. We're simply bringing its essence to your table."
+            </div>
+        </div>
+    </div>
+
+    <div class="row py-5 accent-bg rounded">
+        <div class="col-12">
+            <div class="content-card anim-element" id="philosophy">
+                <h2 class="section-title centered-title fw-bold text-center">Our Philosophy</h2>
+                <div class="row">
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="text-center mb-3">
+                            <i class="fa fa-cow fa-3x" style="color: #088f8f;"></i>
+                        </div>
+                        <h4 class="text-center mb-3">Nature's Bounty</h4>
+                        <p class="text-center">
+                            We harness the bounty of nature to create pure and nourishing milk product's with premium ingredients, sourced from trusted farms and natural environments.
+                        </p>
+                    </div>
+                    <div class="col-md-4 mb-4 mb-md-0">
+                        <div class="text-center mb-3">
+                            <i class="fa fa-tint fa-3x" style="color: #088f8f;"></i>
+                        </div>
+                        <h4 class="text-center mb-3">Pure Formulations</h4>
+                        <p class="text-center">
+                            We are committed to providing milk product's free from artificial additives, preservatives, and unnecessary processing, ensuring a natural and wholesome product.
+                        </p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center mb-3">
+                            <i class="fa fa-heartbeat fa-3x" style="color: #088f8f;"></i>
+                        </div>
+                        <h4 class="text-center mb-3">Wholesome Nourishment</h4>
+                        <p class="text-center">
+                            Our philosophy is rooted in the belief that healthy living starts with natural nourishment, providing essential nutrients and goodness in every serving of our milk product's.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row py-5 align-items-center">
+        <div class="col-lg-6 order-lg-2 mb-4 mb-lg-0 anim-element" id="special-image">
+            <div class="img-container">
+                <img src="{% static 'images/about/special.jpg' %}" alt="What makes us special" class="feature-image">
+            </div>
+        </div>
+        <div class="col-lg-6 order-lg-1 anim-element" id="special-text">
+            <h2 class="section-title fw-bold">What Makes Dairy Daily  Milk product's Special?</h2>
+            <p class="mb-3">
+                Dairy Daily  stands out for its commitment to quality, natural sourcing, and nutritional value. Our unique selection of milk product's is designed to cater to various dietary needs and culinary applications.
+            </p>
+            <p class="mb-3">
+                Whether you're looking for the creamy richness of cow's milk, the light texture of almond milk, or the wholesome goodness of oat milk, Dairy Daily  offers a premium selection for your specific needs.
+            </p>
+            <p>
+                We pride ourselves on our careful sourcing and processing methods, ensuring that each Dairy Daily  milk stock retains its natural flavor and nutritional benefits. Experience the difference that natural, high-quality milk product's can make in your daily life.
+            </p>
+            <div class="mt-4 d-flex flex-wrap">
+                <div class="me-4 mb-3">
+                    <span class="badge bg-light text-dark p-2 rounded-pill" style="border: 1px solid #088f8f;">
+                        <i class="fa fa-check me-1" style="color: #088f8f;"></i> Premium Quality
+                    </span>
+                </div>
+                <div class="me-4 mb-3">
+                    <span class="badge bg-light text-dark p-2 rounded-pill" style="border: 1px solid #088f8f;">
+                        <i class="fa fa-check me-1" style="color: #088f8f;"></i> Naturally Sourced
+                    </span>
+                </div>
+                <div class="me-4 mb-3">
+                    <span class="badge bg-light text-dark p-2 rounded-pill" style="border: 1px solid #088f8f;">
+                        <i class="fa fa-check me-1" style="color: #088f8f;"></i> No Artificial Additives
+                    </span>
+                </div>
+                <div class="mb-3">
+                    <span class="badge bg-light text-dark p-2 rounded-pill" style="border: 1px solid #088f8f;">
+                        <i class="fa fa-check me-1" style="color: #088f8f;"></i> Rich in Nutrients
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row py-5 accent-bg rounded">
+        <div class="col-12">
+            <div class="content-card anim-element" id="commitment">
+                <h2 class="section-title centered-title fw-bold text-center">Our Commitment to You</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <i class="fa fa-users fa-2x" style="color: #088f8f;"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-3">Community First</h4>
+                                <p>
+                                    At Dairy Daily , we are more than just a brand – we are a community dedicated to helping you nourish yourself and your family with the best milk product's. We are committed to providing exceptional customer service and are always here to answer your questions and offer guidance.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-flex">
+                            <div class="flex-shrink-0 me-3">
+                                <i class="fa fa-globe fa-2x" style="color: #088f8f;"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-3">Sustainable Practices</h4>
+                                <p>
+                                    We are deeply committed to sustainability and ethical practices. We strive to minimize our environmental footprint through responsible sourcing, eco-friendly packaging, and ethical production methods that respect our planet and its resources.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5 py-4">
+        <div class="col-12 text-center anim-element" id="cta">
+            <h3 class="fw-bold mb-4">Discover the purity of Dairy Daily  Milk product's</h3>
+            <p class="lead mb-4">
+                Experience the wholesome goodness of naturally sourced milk product's. Explore our range of dairy and non-dairy options today!
+            </p>
+            <a href="/" class="btn btn-primary btn-lg px-5 py-3" id="shop-btn">Shop Now</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const animElements = document.querySelectorAll('.anim-element');
+
+    animElements.forEach(el => {
+        ScrollTrigger.create({
+            trigger: el,
+            start: "top 80%",
+            end: "bottom 20%",
+            onEnter: () => el.classList.add('revealed'),
+            onLeave: () => el.classList.remove('revealed'), // Removed onLeaveBack
+            once: true, // Ensures the animation only happens once
+        });
+    });
+
+
+    gsap.from(".banner-text-container", {
+        opacity: 0,
+        y: 50,
+        duration: 1,
+        ease: "power2.out",
+        delay: 0.5
+    });
+
+    gsap.from(".banner-text-section", {
+        backgroundColor: "rgba(248, 249, 250, 0)", // Transparent
+        duration: 1,
+        ease: "none",
+        scrollTrigger: {
+            trigger: ".banner-text-section",
+            start: "top top", // Start when the top of the element hits the top of the viewport
+            end: "bottom top", // End when the bottom of the element hits the top of the viewport
+            scrub: true, // Smoothly transition the background color
+        },
+    });
+</script>
+{% endblock main-content %}

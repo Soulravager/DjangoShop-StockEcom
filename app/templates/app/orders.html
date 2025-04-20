@@ -1,0 +1,142 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %} Buy Now {% endblock title %}
+
+{% block usernav %}
+<li class="nav-item">
+    <a class="nav-link active" aria-current="page" href="/">Home</a>
+</li>
+
+<li class="nav-item dropdown mx-2">
+    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+        Products
+    </a>
+
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="{% url 'category' 'HO' %}">LapTop</a></li>
+        <li><a class="dropdown-item" href="{% url 'category' 'HS' %}">Mobile Phone</a></li>
+        <li><a class="dropdown-item" href="{% url 'category' 'HM' %}">Tablet</a></li>
+        <li><a class="dropdown-item" href="{% url 'category' 'HC' %}">Smartwatch</a></li>
+        <li><a class="dropdown-item" href="{% url 'category' 'SH' %}">Camera</a></li>
+        <li><a class="dropdown-item" href="{% url 'category' 'HB' %}">ear pods</a></li></li>
+    </ul>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'about' %}">About Us</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+</li>
+{% if request.user.is_authenticated and request.user.is_superuser %}
+<li class="nav-item">
+    <a class="nav-link text-white fw-bold" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+</li>
+{% endif %}
+</ul>
+
+
+<!-- <ul class="navbar-nav me-auto mb-2 mb-lg-0"> 
+<li class="nav-item dropdown mx-2">
+    <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <i class="fa-regular fa-user"></i> {{request.user}}
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+        {% if request.user.is_authenticated and request.user.is_superuser %}
+        <li class="nav-item">
+            <a class="dropdown-item" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+        </li>
+        {% endif %}
+        <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+        <li><a class="dropdown-item" href="{% url 'passwordchange' %}">Change Password</a></li>
+        <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+
+    </ul>
+</li> 
+<li class="nav-item mx-2">
+    <a href="{% url 'showcart' %}" class="nav-link"><span class="badge bg-danger">{% if totalitem > 0 %}{{totalitem}}{% endif %}</span> <i class="fa-solid fa-cart-shopping"></i> </a>
+</li>
+<li class="nav-item mx-2">
+    <a href="" class="nav-link"><span class="badge bg-danger">{% if wishlist_count > 0 %}{{ wishlist_count}}{% endif %}</span> <i class="fa fa-heart"></i> </a>
+</li>-->
+{% endblock %}
+{% block main-content %}
+<div class="container my-5 text-center">
+    <div class="order-confirmation">
+        <i class="fa-solid fa-circle-check text-success fa-4x"></i>
+        <h1 class="mt-3">Your order is successfully paid</h1>
+        <p class="text-muted">Thank you for shopping with us! You will receive an email confirmation shortly.</p>
+        <a href="{% url 'home' %}" class="btn btn-primary mt-3">Go to Home</a>
+    </div>
+</div>
+
+<!-- Custom Styles -->
+<style>
+    /* Main Container */
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 30px;
+    }
+
+    /* Order Confirmation Section */
+    .order-confirmation {
+        background: #f8f9fa;
+        padding: 40px;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .fa-circle-check {
+        font-size: 4rem;
+    }
+
+    h1 {
+        font-weight: bold;
+        color: #333;
+    }
+
+    p {
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    /* Button */
+    .btn-primary {
+        background-color: #007bff;
+        border: none;
+        padding: 12px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+        transition: background 0.3s ease-in-out;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 576px) {
+        .container {
+            padding: 20px;
+        }
+
+        .fa-circle-check {
+            font-size: 3rem;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+        }
+
+        p {
+            font-size: 1rem;
+        }
+    }
+</style>
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      fetch("{% url 'clear_cart' %}");
+  });
+  </script>
+  
+{% endblock main-content %}

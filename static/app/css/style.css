@@ -1,0 +1,127 @@
+.goodnessseccont img{
+    width:100%;
+}
+
+.buttermilk{
+    background-color:#fff;background-image:linear-gradient(#fff7ef, #fff);
+    background-image:-webkit-linear-gradient(#fff7ef, #fff);
+    background-image:-moz-linear-gradient(#fff7ef, #fff);
+    background-image:-ms-linear-gradient(#fff7ef, #fff);
+    background-image:-o-linear-gradient(#fff7ef, #fff);
+    padding:50px 40px;
+    border:1px solid #efe8e1;
+    padding-bottom:20px;
+}
+
+.smbg{
+    background-color:#fff;
+    background-image:linear-gradient(rgba(110, 69, 143, 0.1), #fff);
+    background-image:-webkit-linear-gradient(rgba(110, 69, 143, 0.1), #fff);
+    background-image:-moz-linear-gradient(rgba(110, 69, 143, 0.1), #fff);
+    background-image:-ms-linear-gradient(rgba(110, 69, 143, 0.1), #fff);
+    background-image:-o-linear-gradient(rgba(110, 69, 143, 0.1), #fff);
+}
+
+.curdbgpro{
+    background-color:#fff;
+    background-image:linear-gradient(rgba(10, 77, 123, 0.1), #fff);
+    background-image:-webkit-linear-gradient(rgba(10, 77, 123, 0.1), #fff);
+    background-image:-moz-linear-gradient(rgba(10, 77, 123, 0.1), #fff);
+    background-image:-ms-linear-gradient(rgba(10, 77, 123, 0.1), #fff);
+    background-image:-o-linear-gradient(rgba(10, 77, 123, 0.1), #fff);
+}
+
+.mlkpro{
+    color:#636362;
+    font-size:22px;
+    line-height:22px;
+    margin-bottom:15px;
+    width:43%;
+    margin:0 auto;
+    text-align:center;
+}
+
+.goodnesssec a{
+    text-decoration: none;
+}
+    /* Contact form styles */
+    .contact-form {
+        padding: 40px 0;
+        margin: 0 10px;
+        color: white;
+      }
+
+      .form-container {
+          max-width: 40%;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: black;
+          border-radius: 10px;
+          box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      }
+       .contact-form h2 {
+          text-align: center;
+          margin-bottom: 20px;
+      }
+
+      .form-group {
+          margin-bottom: 20px;
+      }
+      
+      .form-container label {
+          display:block;
+          font-weight: bold;
+      }
+     .form-container input, textarea{
+              width: 100%;
+              padding: 10px;
+              border: 1px solid #ccc;
+              border-radius: 4px;
+              margin-bottom: 1rem;
+              resize: vertical;
+      }
+      .submit-button {
+              padding: 10px 20px;
+              background-color: #0dac30;
+              border: none;
+              color: white;
+              border-radius: 4px;
+              font-size: 1rem;
+              cursor: pointer;
+      }
+        /* Contact info styles */
+        .contact-info {
+            text-align: center;
+            padding: 50px 0;
+            background-color: #f7f7f7;
+        }
+        
+        .contact-info h2 {
+            margin-bottom: 20px;
+        }
+        .top {
+            --offset: 50px; 
+            
+            position: sticky;
+
+            bottom: 50px;      
+            right:20px; 
+            place-self: end;
+            margin-top: calc(100vh + var(--offset));
+            
+            /* visual styling */
+            text-decoration: none;
+            padding: 10px;
+            font-family: sans-serif;
+            color: #fff;
+            background: #000;
+            border-radius: 100px;
+            white-space: nowrap;
+          }
+          
+          
+          /* remove the below if you don't want smooth scrolling */
+          html,
+          body {
+            scroll-behavior: smooth;
+          }

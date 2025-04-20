@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Orders</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 32px;
+            font-weight: 500;
+        }
+        .filter-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .filter-container select, .filter-container button {
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            background-color: #fff;
+            color: #555;
+            transition: 0.3s ease;
+        }
+        .filter-container button {
+            background-color: #5c6bc0;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .filter-container button:hover {
+            background-color: #3f51b5;
+        }
+        table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+        th {
+            background-color: #5c6bc0;
+            color: #fff;
+        }
+        td {
+            background-color: #fff;
+            color: #333;
+            border-top: 1px solid #ddd;
+        }
+        tr:hover td {
+            background-color: #f0f0f0;
+        }
+        .actions select, .actions button {
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            background-color: #f4f7fc;
+        }
+        .actions button {
+            background-color: #5c6bc0;
+            color: white;
+            cursor: pointer;
+        }
+        .actions button:hover {
+            background-color: #3f51b5;
+        }
+        .card {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        .card h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+        .card p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .card .status {
+            font-weight: bold;
+        }
+        .card .status.pending {
+            color: orange;
+        }
+        .card .status.delivered {
+            color: green;
+        }
+        .card .status.cancelled {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h2>Manage Orders</h2>
+
+    <!-- Filters Section -->
+    <div class="filter-container">
+        <form method="GET">
+            <!-- Status Filter -->
+            <select name="status">
+                <option value="">Filter by Status</option>
+                {% for choice, label in status_choices %}
+                    <option value="{{ choice }}" {% if request.GET.status == choice %}selected{% endif %}>
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+
+            <!-- Time Range Filter -->
+            <select name="time_range">
+                <option value="">Filter by Time</option>
+                <option value="last_7_days" {% if request.GET.time_range == 'last_7_days' %}selected{% endif %}>Last 7 Days</option>
+                <option value="last_30_days" {% if request.GET.time_range == 'last_30_days' %}selected{% endif %}>Last 30 Days</option>
+                <option value="this_month" {% if request.GET.time_range == 'this_month' %}selected{% endif %}>This Month</option>
+                <option value="last_month" {% if request.GET.time_range == 'last_month' %}selected{% endif %}>Last Month</option>
+            </select>
+
+            <!-- Sort by Time -->
+            <select name="sort_by">
+                <option value="latest" {% if request.GET.sort_by == 'latest' %}selected{% endif %}>Sort by Latest</option>
+                <option value="oldest" {% if request.GET.sort_by == 'oldest' %}selected{% endif %}>Sort by Oldest</option>
+            </select>
+
+            <button type="submit">Apply Filters</button>
+        </form>
+    </div>
+
+    <!-- Orders Table -->
+    <div class="card">
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Paid</th>
+                    <th>Amount</th>
+                    <th>Order Date</th>
+                    <th>Order ID</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>{{ order.user.username }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.quantity }}</td>
+                    <td>{{ order.payment.paid|yesno:"Yes,No" }}</td>
+                    <td>₹{{ order.payment.amount }}</td>
+                    <td>{{ order.ordered_date }}</td>
+                    <td>{{ order.order_id }}</td>
+                    <td class="status {% if order.delivery_status == 'Pending' %}pending{% elif order.delivery_status == 'Delivered' %}delivered{% elif order.delivery_status == 'Cancel' %}cancelled{% endif %}">
+                        {{ order.delivery_status }}
+                    </td>
+                    <td class="actions">
+                        <form method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="order_id" value="{{ order.id }}">
+                            <select name="delivery_status">
+                                {% for choice, label in status_choices %}
+                                    <option value="{{ choice }}" {% if order.delivery_status == choice %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

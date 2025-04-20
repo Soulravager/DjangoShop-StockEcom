@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Order History</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f7f7f7;
+      margin: 0;
+      padding: 0;
+      color: #333;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-top: 20px;
+    }
+
+    .order-container {
+      background: #fff;
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      width: 80%;
+      max-width: 800px;
+    }
+
+    .order-container h3 {
+      font-size: 1.2rem;
+      color: #007BFF;
+    }
+
+    .order-container p {
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+    }
+
+    .tracking {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 20px;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+      position: relative;
+    }
+
+    .dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background-color: #dcdcdc;
+      transition: background-color 0.3s;
+    }
+
+    .dot.active {
+      background-color: #4CAF50;
+    }
+
+    .dot.cancelled {
+      background-color: #FF9800;
+    }
+
+    .label {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+
+    .line, .line-filled {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      height: 4px;
+      width: 100%;
+      z-index: 0;
+    }
+
+    .line {
+      background-color: #dcdcdc;
+    }
+
+    .line-filled {
+      background-color: #4CAF50;
+    }
+
+    .cancel-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #F44336;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
+      transition: background-color 0.3s;
+    }
+
+    .cancel-btn:hover {
+      background-color: #D32F2F;
+    }
+
+    .cancelled .line {
+      background-color: #FF9800;
+    }
+
+    .cancelled .dot {
+      background-color: #FF9800;
+    }
+
+    .cancelled .label {
+      color: #FF9800;
+    }
+  </style>
+</head>
+<body>
+  <h2>Your Orders</h2>
+
+  {% for order in orders %}
+  <div class="order-container">
+    <h3>{{ order.product }}</h3>
+    <p>Status: {{ order.delivery_status }}</p>
+
+    <!-- Active Orders -->
+    <div id="open-{{ order.id }}" style="display: none;">
+      <div class="tracking">
+        <div class="line"></div>
+        <div class="line-filled" style="width: {{ order.progress }}%;"></div>
+
+        <div class="step">
+          <div class="dot {% if order.delivery_status in 'Pending Accepted Packed On The Way Delivered' %}active{% endif %}"></div>
+          <div class="label">Pending</div>
+        </div>
+        <div class="step">
+          <div class="dot {% if order.delivery_status in 'Accepted Packed On The Way Delivered' %}active{% endif %}"></div>
+          <div class="label">Accepted</div>
+        </div>
+        <div class="step">
+          <div class="dot {% if order.delivery_status in 'Packed On The Way Delivered' %}active{% endif %}"></div>
+          <div class="label">Packed</div>
+        </div>
+        <div class="step">
+          <div class="dot {% if order.delivery_status in 'On The Way Delivered' %}active{% endif %}"></div>
+          <div class="label">On The Way</div>
+        </div>
+        <div class="step">
+          <div class="dot {% if order.delivery_status == 'Delivered' %}active{% endif %}"></div>
+          <div class="label">Delivered</div>
+        </div>
+      </div>
+
+      {% if order.delivery_status != "Delivered" %}
+      <form method="post" action="{% url 'cancel-order' order.id %}">
+        {% csrf_token %}
+        <button type="submit" class="cancel-btn">Cancel Order</button>
+      </form>
+      {% endif %}
+    </div>
+
+    <!-- Cancelled Orders -->
+    <div id="cancelled-{{ order.id }}" style="display: none;" class="cancelled">
+      <div class="tracking">
+        <div class="line"></div>
+
+        <div class="step">
+          <div class="dot cancelled"></div>
+          <div class="label">Pending</div>
+        </div>
+        <div class="step">
+          <div class="dot cancelled"></div>
+          <div class="label">Cancelled</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- JS to toggle open/cancelled div -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      {% for order in orders %}
+        {% if order.delivery_status|lower == 'cancel' %}
+          document.getElementById("cancelled-{{ order.id }}").style.display = "block";
+        {% else %}
+          document.getElementById("open-{{ order.id }}").style.display = "block";
+        {% endif %}
+      {% endfor %}
+    });
+  </script>
+</body>
+</html>

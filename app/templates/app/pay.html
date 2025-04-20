@@ -1,0 +1,114 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Fake Payment{% endblock %}
+
+{% block main-content %}
+<div class="text-center mt-5">
+  <h2>Review Your Order</h2>
+  <p>Total Amount: <b>₹{{ amt }}</b></p>
+  <button class="btn btn-primary mt-3" onclick="openModal()">Proceed to Payment</button>
+</div>
+
+<!-- Overlay Modal -->
+<div id="paymentModal" class="modal-overlay">
+  <div class="modal-content">
+    <span class="close-button" onclick="closeModal()">&times;</span>
+    <h3 class="text-center mb-3">Mock Payment Gateway</h3>
+
+    <form method="post" action="{% url 'orders' %}" id="payment-form">
+      {% csrf_token %}
+      <input type="hidden" name="order_id" value="{{ order_id }}">
+      <input type="hidden" name="amount" value="{{ amt }}">
+      <input type="hidden" name="cust_id" value="{{ user.customer_set.first.id }}">
+
+      <div class="mb-3">
+        <label><b>Select Payment Method</b></label>
+        <select class="form-select" id="payment-method" required>
+          <option value="">-- Choose --</option>
+          <option value="card">Credit/Debit Card</option>
+          <option value="upi">UPI</option>
+        </select>
+      </div>
+
+      <!-- Card Fields -->
+      <div id="card-fields" style="display: none;">
+        <input type="text" class="form-control mb-2" name="card_number" placeholder="Card Number">
+        <div class="row mb-2">
+          <div class="col">
+            <input type="text" class="form-control" name="expiry" placeholder="MM/YY">
+          </div>
+          <div class="col">
+            <input type="text" class="form-control" name="cvv" placeholder="CVV">
+          </div>
+        </div>
+        <input type="text" class="form-control mb-2" name="name" placeholder="Name on Card">
+      </div>
+
+      <!-- UPI Fields -->
+      <div id="upi-fields" style="display: none;">
+        <input type="text" class="form-control mb-2" name="upi_id" placeholder="yourname@bank">
+      </div>
+
+      <button type="submit" class="btn btn-success w-100 mt-3">Pay ₹{{ amt }}</button>
+    </form>
+  </div>
+</div>
+
+<style>
+.modal-overlay {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 80px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+  background-color: #fff;
+  margin: auto;
+  padding: 30px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 500px;
+  position: relative;
+}
+
+.close-button {
+  color: #aaa;
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-button:hover {
+  color: #000;
+}
+</style>
+
+<script>
+function openModal() {
+  document.getElementById('paymentModal').style.display = 'block';
+}
+function closeModal() {
+  document.getElementById('paymentModal').style.display = 'none';
+}
+
+const methodSelector = document.getElementById('payment-method');
+const cardFields = document.getElementById('card-fields');
+const upiFields = document.getElementById('upi-fields');
+
+methodSelector.addEventListener('change', () => {
+  const selected = methodSelector.value;
+  cardFields.style.display = selected === 'card' ? 'block' : 'none';
+  upiFields.style.display = selected === 'upi' ? 'block' : 'none';
+});
+</script>
+{% endblock %}

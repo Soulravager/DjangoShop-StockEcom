@@ -1,0 +1,247 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block main-content %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Manage Products</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px; border: 1px solid #ccc; text-align: center; }
+        img { height: 60px; }
+        .btn { padding: 6px 12px; border: none; cursor: pointer; margin: 2px; border-radius: 5px; }
+        .btn-edit { background: #007bff; color: white; }
+        .btn-delete { background: #dc3545; color: white; }
+        .modal { display: none; position: fixed; top: 10%; left: 50%; transform: translateX(-50%); background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 20px rgba(0,0,0,0.2); z-index: 999; width: 50%; }
+        .modal.active { display: block; }
+        .overlay { display: none; position: fixed; top: 0; left: 0; height: 100%; width: 100%; background: rgba(0,0,0,0.5); z-index: 998; }
+        .overlay.active { display: block; }
+    </style>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            margin: 0;
+            padding: 30px;
+        }
+    
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+    
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+            background: white;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+    
+        th {
+            background-color: #4CAF50;
+            color: white;
+            padding: 16px;
+            font-weight: 600;
+            text-transform: uppercase;
+            text-align: center;
+        }
+    
+        td {
+            padding: 16px;
+            text-align: center;
+            color: #444;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+        }
+    
+        tr:hover td {
+            background-color: #f9f9f9;
+        }
+    
+        img {
+            height: 60px;
+            border-radius: 6px;
+            object-fit: cover;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+        }
+    
+        .btn {
+            padding: 8px 14px;
+            border: none;
+            cursor: pointer;
+            margin: 2px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+    
+        .btn-edit {
+            background: #007bff;
+            color: white;
+        }
+    
+        .btn-edit:hover {
+            background: #0056b3;
+        }
+    
+        .btn-delete {
+            background: #dc3545;
+            color: white;
+        }
+    
+        .btn-delete:hover {
+            background: #b52a37;
+        }
+    
+        .modal {
+            display: none;
+            position: fixed;
+            top: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 0 25px rgba(0,0,0,0.15);
+            z-index: 999;
+            width: 50%;
+            max-width: 600px;
+            transition: all 0.3s ease;
+        }
+    
+        .modal.active {
+            display: block;
+        }
+    
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            width: 100%;
+            background: rgba(0,0,0,0.4);
+            z-index: 998;
+        }
+    
+        .overlay.active {
+            display: block;
+        }
+    
+        form input, form select, form textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+    
+        form button {
+            margin-top: 10px;
+        }
+    </style>
+    
+</head>
+<body>
+
+<h2>Manage Products</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Image</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Category</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products %}
+        <tr>
+            <td><img src="{{ product.product_image.url }}"></td>
+            <td>{{ product.title }}</td>
+            <td>₹{{ product.selling_price }}</td>
+            <td>{{ product.stock }}</td>
+            <td>{{ product.category }}</td>
+            <td>
+                <button class="btn btn-edit" onclick="openEditModal({{ product.id }}, '{{ product.title }}', '{{ product.selling_price }}', '{{ product.discounted_price }}', '{{ product.description }}', '{{ product.stock }}', '{{ product.category }}')">Edit</button>
+                <a href="{% url 'delete_product' product.pk %}" class="btn btn-delete" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<!-- Overlay and Modal -->
+<div class="overlay" id="overlay" onclick="closeModal()"></div>
+<div class="modal" id="editModal">
+    <h3>Edit Product</h3>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="hidden" name="product_id" id="product_id">
+    
+        <label>Title</label>
+        <input type="text" name="title" id="edit_title" required>
+    
+        <label>Selling Price</label>
+        <input type="number" name="selling_price" id="edit_selling_price" required>
+    
+        <label>Discounted Price</label>
+        <input type="number" name="discounted_price" id="edit_discounted_price">
+    
+        <label>Description</label>
+        <textarea name="description" id="edit_description" rows="4"></textarea>
+    
+        <label>Stock</label>
+        <input type="number" name="stock" id="edit_stock" required>
+    
+        <label>Category</label>
+        <input type="text" name="category" id="edit_category" required>
+    
+        <label>Change Image (optional)</label>
+        <input type="file" name="product_image">
+    
+        <button type="submit" class="btn btn-edit">Save Changes</button>
+        <button type="button" class="btn btn-delete" onclick="closeModal()">Cancel</button>
+    </form>
+    
+</div>
+
+<script>
+     function openEditModal(id, title, price, discount, desc, stock, category) {
+        document.getElementById('product_id').value = id;
+        document.getElementById('edit_title').value = title;
+        document.getElementById('edit_selling_price').value = price;
+        document.getElementById('edit_discounted_price').value = discount;
+        document.getElementById('edit_description').value = desc;
+        document.getElementById('edit_stock').value = stock;
+        document.getElementById('edit_category').value = category;
+
+        document.getElementById('overlay').classList.add('active');
+        document.getElementById('editModal').classList.add('active');
+    }
+
+    function closeModal() {
+        document.getElementById('overlay').classList.remove('active');
+        document.getElementById('editModal').classList.remove('active');
+    }
+    function closeModal() {
+        document.getElementById('overlay').classList.remove('active');
+        document.getElementById('editModal').classList.remove('active');
+    }
+</script>
+
+</body>
+</html>
+{% endblock main-content %}

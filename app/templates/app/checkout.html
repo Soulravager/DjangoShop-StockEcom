@@ -1,0 +1,226 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Checkout - Your Order{% endblock title %}
+
+
+
+{% block main-content %}
+<div class="container my-5">
+    {% if messages %}
+        {% for msg in messages %}
+           <div class="alert alert-danger" role="alert">
+               {{msg}}
+           </div>
+        {% endfor  %}
+    {% endif %}
+    
+    {% if not cart_items or cart_items|length == 0 %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm text-center p-5">
+                <div class="card-body">
+                    <i class="fa fa-shopping-cart fa-4x text-muted mb-3"></i>
+                    <h3>Your cart is empty</h3>
+                    <p class="text-muted">Add some products to your cart before proceeding to checkout.</p>
+                    <a href="/" class="btn btn-primary mt-3">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Checkout</h2>
+            <div class="progress mb-4" style="height: 30px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: 66%;" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">Step 2 of 3: Shipping</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Order Summary</h4>
+                </div>
+                <div class="card-body">
+                    {% for item in cart_items %}
+                      <div class="card mb-3 border-0">
+                        <div class="row g-0">
+                            <div class="col-md-2 d-flex align-items-center justify-content-center">
+                                <div class="bg-light rounded p-2 text-center">
+                                    <span class="fs-4 text-primary">{{item.quantity}}x</span>
+                                </div>
+                            </div>
+                            <div class="col-md-10">
+                                <div class="card-body py-2">
+                                    <h5 class="card-title">{{item.product.title}}</h5>
+                                    <p class="card-text text-muted mb-0">Unit Price: ₹{{item.product.discounted_price}}</p>
+                                    <p class="card-text fw-bold">Subtotal: ₹{{item.product.discounted_price|floatformat:2}}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                      </div>
+                    {% endfor %}
+                    
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td class="text-end">₹{{totalamount|floatformat:2}}</td>
+                                </tr>
+                                
+                                {% with order_subtotal=totalamount|floatformat:0|add:0 %}
+                                <tr>
+                                    <td>Shipping</td>
+                                    <td class="text-end">
+                                        {% if order_subtotal >= 500 %}
+                                            <span class="text-success fw-bold">FREE</span>
+                                        {% else %}
+                                            ₹40.00
+                                            <small class="d-block text-muted">
+                                                Add ₹{{ 500|add:"-"|add:order_subtotal }} more to qualify for free shipping
+                                            </small>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr class="fw-bold fs-5">
+                                    <td>Total</td>
+                                    <td class="text-end">
+                                        {% if order_subtotal >= 500 %}
+                                            ₹{{totalamount|floatformat:2}}
+                                        {% else %}
+                                            ₹{{totalamount|add:40|floatformat:2}}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endwith %}
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fa fa-info-circle me-2"></i> Orders above ₹500 qualify for FREE shipping!
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-5">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Shipping Address</h4>
+                </div>
+                <div class="card-body">
+                    {% if add %}
+                    <form method="post" id="myform" action="{% url 'pay' %}" onsubmit="return validateCheckout()">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <select class="form-select" id="address-selector" onchange="updateSelectedAddress(this)">
+                                <option selected disabled>Choose a shipping address</option>
+                                {% for ad in add %}
+                                    <option value="{{ad.id}}">{{ad.name}} - {{ad.locality}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div id="address-list">
+                            {% for ad in add %}
+                            <div class="card mb-3 address-card" id="address-card-{{ad.id}}" style="display: none;">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ad.name}}</h5>
+                                    <p class="card-text mb-1"><i class="fa fa-phone me-2"></i>{{ad.mobile}}</p>
+                                    <p class="card-text mb-1"><i class="fa fa-map-marker me-2"></i>{{ad.locality}}</p>
+                                    <p class="card-text mb-1">{{ad.city}}, {{ad.state}} - {{ad.zipcode}}</p>
+                                    <input type="radio" name="custid" id="custadd{{forloop.counter}}" value="{{ad.id}}" class="d-none" {% if forloop.first %}checked{% endif %}>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <a href="{% url 'profile' %}" class="btn btn-outline-secondary">Add New Address</a>
+                        </div>
+                        
+                        {% with order_subtotal=totalamount|floatformat:0|add:0 %}
+                        <div class="form-check mb-3 d-none">
+                            <label for="totamount" class="form-label">Total Amount</label>
+                            {% if order_subtotal >= 500 %}
+                                <input type="number" class="form-control" name="totamount" value={{totalamount}} readonly>
+                            {% else %}
+                                <input type="number" class="form-control" name="totamount" value={{totalamount|add:40}} readonly>
+                            {% endif %}
+                        </div>
+                        {% endwith %}
+                        
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" id="rzp-button1" class="btn btn-lg btn-success">
+                                Proceed to Payment <i class="fa fa-arrow-right ms-2"></i>
+                            </button>
+                            <a href="{% url 'showcart' %}" class="btn btn-outline-secondary">
+                                <i class="fa fa-arrow-left me-2"></i> Back to Cart
+                            </a>
+                        </div>
+                    </form>
+                    {% else %}
+                    <div class="text-center py-4">
+                        <i class="fa fa-map-marker fa-3x text-muted mb-3"></i>
+                        <h5>No shipping address found</h5>
+                        <p class="text-muted">Please add a shipping address to continue.</p>
+                        <a href="{% url 'profile' %}" class="btn btn-primary mt-2">Add New Address</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    function updateSelectedAddress(select) {
+        // Hide all address cards
+        document.querySelectorAll('.address-card').forEach(card => {
+            card.style.display = 'none';
+        });
+        
+        // Show selected address card
+        const selectedId = select.value;
+        document.getElementById('address-card-' + selectedId).style.display = 'block';
+        
+        // Check the corresponding radio button
+        document.querySelector('input[name="custid"][value="' + selectedId + '"]').checked = true;
+    }
+    
+    // Validate checkout form
+    function validateCheckout() {
+        // Check if any products are in cart
+        {% if not cart_items or cart_items|length == 0 %}
+            alert("Your cart is empty. Please add products before proceeding to checkout.");
+            return false;
+        {% endif %}
+        
+        // Check if an address is selected
+        const addressSelector = document.getElementById('address-selector');
+        if (addressSelector.selectedIndex === 0) {
+            alert("Please select a shipping address.");
+            addressSelector.focus();
+            return false;
+        }
+        
+        return true;
+    }
+    
+    // Initialize with first address selected
+    window.onload = function() {
+        const selector = document.getElementById('address-selector');
+        if (selector && selector.options.length > 1) {
+            selector.selectedIndex = 1;
+            updateSelectedAddress(selector);
+        }
+    };
+</script>
+{% endblock %}

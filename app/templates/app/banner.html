@@ -1,0 +1,25 @@
+{% load static %}
+<div id="carouselExampleIndicators" class="carousel slide banner-slider" data-bs-ride="carousel" style="max-height: 500px; overflow: hidden; border-radius: 1rem;">
+    <div class="carousel-indicators">
+        {% for img in banner_images %}
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{ forloop.counter0 }}"
+                {% if forloop.first %}class="active" aria-current="true"{% endif %}
+                aria-label="Slide {{ forloop.counter }}"></button>
+        {% endfor %}
+    </div>
+    <div class="carousel-inner">
+        {% for img in banner_images %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+            <img src="{% static img %}" class="d-block w-100" alt="Banner {{ forloop.counter }}" style="object-fit: cover; height: 500px;">
+        </div>
+        {% endfor %}
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>

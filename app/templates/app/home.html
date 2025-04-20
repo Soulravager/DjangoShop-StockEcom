@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min2.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <title>Electra | {% block title %}{% endblock title %}Document</title>
+
+    <style>
+        body {
+            padding-top: 70px;
+            background-color: #f0f8ff;
+            color: #0c3001;
+            font-family: 'Arial', sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+        }
+
+        .navbar {
+            background-color: #e0f7fa;
+            border-bottom: 2px solid #b0e0e6;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand img {
+            max-height: 50px;
+            width: auto;
+        }
+
+        .navbar-nav .nav-link {
+            color: #0c3001;
+            transition: color 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: #088f8f;
+        }
+
+        .navbar-toggler {
+            border: 1px solid #088f8f;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23088f8f' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .dropdown-menu {
+            background-color: #f0f8ff;
+            border: 1px solid #b0e0e6;
+        }
+
+        .dropdown-item {
+            color: #0c3001;
+        }
+
+        .dropdown-item:hover {
+            background-color: #b0e0e6;
+            color: #0c3001;
+        }
+
+        .btn-outline-primary {
+            color: #088f8f;
+            border-color: #088f8f;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #088f8f;
+            color: #f0f8ff;
+            border-color: #088f8f;
+        }
+
+        .btn-outline-primary:active{
+            background-color: #046868;
+            color: #f0f8ff;
+            border-color: #046868;
+        }
+
+        .badge {
+            background-color: #ff6347;
+        }
+
+        footer {
+            background-color: #e0f7fa;
+            border-top: 2px solid #b0e0e6;
+            color: #0c3001;
+        }
+
+        .form-control {
+            background-color: #ffffff;
+            color: #0c3001;
+            border: 1px solid #b0e0e6;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            color: #0c3001;
+            border-color: #088f8f;
+            box-shadow: 0 0 5px 2px rgba(0, 143, 143, 0.5);
+        }
+
+        ::selection {
+            background: #b0e0e6;
+            color: #0c3001;
+        }
+
+        input::placeholder {
+            color: #a9a9a9;
+            font-family: 'Arial', sans-serif;
+        }
+
+        /* New styles for improved layout and appearance */
+        .banner-slider {
+            margin-bottom: 60px;
+        }
+
+        .info-section {
+            padding: 80px 0;
+            background-color: #f8f8f8;
+            text-align: center;
+        }
+
+        .info-section h2 {
+            font-size: 2.5rem;
+            color: #0c3001;
+            margin-bottom: 20px;
+        }
+
+        .info-section p {
+            font-size: 1.1rem;
+            color: #0c3001;
+            line-height: 1.7;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        .product-section {
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .product-section h2 {
+            font-size: 2.5rem;
+            color: #0c3001;
+            margin-bottom: 60px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .product-card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .product-card h3 {
+            font-size: 1.2rem;
+            color: #0c3001;
+            margin-bottom: 10px;
+        }
+
+        .product-card p {
+            font-size: 1rem;
+            color: #0c3001;
+        }
+    </style>
+</head>
+<body>
+    {% include 'app/load.html' %}
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top custom-navbar">
+            <div class="container-fluid">
+                <a class="custom-navbar-brand" href="/">
+                    <img src="{% static 'images/cow.png' %}" alt="cow" width="100" height="50">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#customNavbarSupportedContent" aria-controls="customNavbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="customNavbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-3 mb-lg-0">
+                        {% block usernav %}
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link active" aria-current="page" href="/">Home</a>
+                        </li>
+                        <li class="nav-item dropdown mx-2" id="customProductDropdown">
+                            <a class="nav-link custom-nav-link dropdown-toggle" href="{% url 'category' 'HO' %}" id="navbarDropdown" role="button">
+                                Products
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                 <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HO' %}">LapTop</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HS' %}">Mobile Phone</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HM' %}">Tablet</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HC' %}">Smartwatch</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'SH' %}">Camera</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HB' %}">Ear Pods</a></li>
+                            </ul>
+                            <style>
+                                #customProductDropdown:hover > .dropdown-menu { display: block; margin-top: 0; }
+                                #customProductDropdown > .dropdown-menu { display: none; }
+                            </style>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" href="{% url 'about' %}">About Us</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link" href="{% url 'contact' %}">Contact Us</a>
+                        </li>
+                        {% if request.user.is_authenticated and request.user.is_superuser %}
+                        <li class="nav-item">
+                            <a class="nav-link custom-nav-link text-success fw-bold" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+                        </li>
+                        {% endif %}
+                        {% endblock %}
+                    </ul>
+                    <form class="d-flex" role="search" action="/search">
+                        <input class="form-control custom-form-control me-2" type="search" placeholder="Search" name="search" aria-label="Search">
+                        <button class="btn custom-btn-outline-primary" type="submit">Search</button>
+                    </form>
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item dropdown mx-2">
+                            <a class="nav-link custom-nav-link dropdown-toggle" href="#" id="customProfileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-regular fa-user"></i> {{request.user}}
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="customProfileDropdown">
+                                {% if request.user.is_authenticated and request.user.is_superuser %}
+                                <li><a class="dropdown-item custom-dropdown-item" href="{% url 'admin_dashboard' %}">Admin Dashboard</a></li>
+                                {% endif %}
+                                <li><a class="dropdown-item custom-dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="{% url 'passwordchange' %}">Change Password</a></li>
+                                <li><a class="dropdown-item custom-dropdown-item" href="/logout/">Logout</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a href="{% url 'showcart' %}" class="nav-link custom-nav-link"><span class="badge bg-danger">{% if totalitem > 0 %}{{totalitem}}{% endif %}</span> <i class="fa-solid fa-cart-shopping"></i> </a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a href="{% url 'showwishlist' %}" class="nav-link custom-nav-link"><span class="badge bg-danger">{% if wishlist_count > 0 %}{{ wishlist_count}}{% endif %}</span> <i class="fa fa-heart"></i> </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <style>
+    /* Custom Header Styles */
+    .custom-navbar {
+        background-color: #e0f7fa;
+        padding: 1rem 2rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid #b0e0e6;
+        border-radius: 0 0 16px 16px;
+    }
+
+    .custom-navbar-brand img {
+        max-height: 55px;
+        transition: transform 0.3s ease;
+    }
+
+    .custom-navbar-brand img:hover {
+        transform: scale(1.05);
+    }
+
+    .custom-nav-link {
+        color: #0c3001;
+        font-weight: 500;
+        padding: 0.6rem 1rem;
+        margin: 0 0.3rem;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+    }
+
+    .custom-nav-link:hover,
+    .custom-nav-link.active {
+        background-color: #d0f0f2;
+        color: #046868;
+    }
+
+    .custom-dropdown-item {
+        color: #0c3001;
+        transition: background 0.2s ease;
+    }
+
+    .custom-dropdown-item:hover {
+        background-color: #b0e0e6;
+        color: #0c3001;
+    }
+
+    .custom-btn-outline-primary {
+        color: #088f8f;
+        border-color: #088f8f;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(8, 143, 143, 0.2);
+    }
+
+    .custom-btn-outline-primary:hover {
+        background-color: #088f8f;
+        color: #f0f8ff;
+    }
+
+    .custom-form-control {
+        border-radius: 8px;
+        border: 1px solid #b0e0e6;
+    }
+
+    .custom-form-control:focus {
+        border-color: #088f8f;
+        box-shadow: 0 0 5px 2px rgba(0, 143, 143, 0.3);
+    }
+
+    /* Dropdown Hover */
+    #customProductDropdown:hover > .dropdown-menu {
+        display: block;
+        margin-top: 0;
+    }
+    #customProductDropdown > .dropdown-menu {
+        display: none;
+    }
+</style>
+
+    </header>
+    
+<!-- BANNER LOADER --><!-- BANNER LOADER --><!-- BANNER LOADER -->
+    {% include 'app/banner.html' %} 
+<!-- BANNER LOADER --><!-- BANNER LOADER --><!-- BANNER LOADER -->
+
+        
+        
+
+        {% block information %}
+        <div class="info-section">
+            <div class="container">
+                <h2>About Our Products</h2>
+                <p>
+                    Welcome to Electra, your one-stop destination for premium Gadgets.  We believe that everyone deserves access to high-quality products that enhance their daily lives.
+                    Our mission is to provide a seamless shopping experience with a focus on quality, affordability, and customer satisfaction.
+                </p>
+            </div>
+        </div>
+        {% endblock information %}
+
+        {% block main-content %}
+        <div class="product-section">
+            <div class="container">
+                <h2>Featured Gadgets</h2>
+                <div class="product-grid">
+                    <div class="product-card">
+                        <img src="{% static 'images/oil.jpg' %}" alt="Laptops">
+                        <h3>Laptops</h3>
+                        <p>Explore our range of powerful and efficient laptops.</p>
+                        <a href="{% url 'category' 'HO' %}" class="btn btn-outline-primary">View Products</a>
+                    </div>
+                    <div class="product-card">
+                        <img src="{% static 'images/serum.jpg' %}" alt="Mobile Phones">
+                        <h3>Mobile Phones</h3>
+                        <p>Discover the latest mobile phone technology.</p>
+                         <a href="{% url 'category' 'HS' %}" class="btn btn-outline-primary">View Products</a>
+                    </div>
+                    <div class="product-card">
+                        <img src="{% static 'images/hairmask.jpg' %}" alt="Tablets">
+                        <h3>Tablets</h3>
+                        <p>Find the perfect tablet for your needs.</p>
+                        <a href="{% url 'category' 'HM' %}" class="btn btn-outline-primary">View Products</a>
+                    </div>
+                    <div class="product-card">
+                        <img src="{% static 'images/hairconditioner.jpg' %}" alt="Smartwatches">
+                        <h3>Smartwatches</h3>
+                        <p>Stay connected with our smartwatches.</p>
+                        <a href="{% url 'category' 'HC' %}" class="btn btn-outline-primary">View Products</a>
+                    </div>
+                    <div class="product-card">
+                        <img src="{% static 'images/shampoo.jpg' %}" alt="Cameras">
+                        <h3>Cameras</h3>
+                        <p>Capture your best moments with our cameras.</p>
+                        <a href="{% url 'category' 'SH' %}" class="btn btn-outline-primary">View Products</a>
+                    </div>
+                     <div class="product-card">
+                        <img src="{% static 'images/hairbutter.jpg' %}" alt="Earbuds">
+                        <h3>Earbuds</h3>
+                        <p>Experience superior sound quality.</p>
+                        <a href="{% url 'category' 'HB' %}" class="btn btn-outline-primary">View Products</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endblock main-content %}
+    </main>
+
+    <footer class="bg-dark text-light text-center py-3">
+        <div class="container">
+            <p>&copy; 2025 Electra by Alvi. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/myscripts.js' %}"></script>
+</body>
+</html>

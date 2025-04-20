@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="{% static 'css/owl.carousel.min.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min2.css' %}"/>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <title>Electra | {% block title %}{% endblock title %}Document</title>
+
+    <style>
+        body {
+            padding-top: 80px;
+            background-color: #f0f8ff;
+            color: #0c3001;
+            font-family: 'Inter', sans-serif;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 70px;
+            }
+        }
+
+        /* Navbar Modernized */
+        .navbar {
+            background-color: #e0f7fa;
+            padding: 1rem 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #b0e0e6;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .navbar-brand img {
+            max-height: 55px;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand img:hover {
+            transform: scale(1.05);
+        }
+
+        .navbar-nav .nav-link {
+            color: #0c3001;
+            font-weight: 500;
+            padding: 0.6rem 1rem;
+            margin: 0 0.3rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            background-color: #d0f0f2;
+            color: #046868;
+        }
+
+        .navbar-toggler {
+            border: none;
+            outline: none;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23088f8f' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+        }
+
+        .dropdown-menu {
+            background-color: #f0f8ff;
+            border: 1px solid #b0e0e6;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .dropdown-item {
+            color: #0c3001;
+            transition: background 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #b0e0e6;
+            color: #0c3001;
+        }
+
+        .btn-outline-primary {
+            color: #088f8f;
+            border-color: #088f8f;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(8, 143, 143, 0.2);
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #088f8f;
+            color: #f0f8ff;
+        }
+
+        .badge {
+            background-color: #ff6347;
+            font-size: 0.75rem;
+        }
+
+        footer {
+            background-color: #e0f7fa;
+            border-top: 2px solid #b0e0e6;
+            color: #0c3001;
+            padding: 1rem 0;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #b0e0e6;
+        }
+
+        .form-control:focus {
+            border-color: #088f8f;
+            box-shadow: 0 0 5px 2px rgba(0, 143, 143, 0.3);
+        }
+
+        ::selection {
+            background: #b0e0e6;
+            color: #0c3001;
+        }
+
+        input::placeholder {
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">
+                <img src="{% static 'images/cow.png' %}" alt="Neel">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-3 mb-lg-0">
+                    {% block usernav %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Home</a>
+                    </li>
+                    <li class="nav-item dropdown mx-2" id="productDropdown">
+                        <a class="nav-link dropdown-toggle" href="{% url 'category' 'HO' %}" id="navbarDropdown">Products</a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="{% url 'category' 'HO' %}">LapTop</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' 'HS' %}">Mobile Phone</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' 'HM' %}">Tablet</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' 'HC' %}">Smartwatch</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' 'SH' %}">Camera</a></li>
+                            <li><a class="dropdown-item" href="{% url 'category' 'HB' %}">Ear Pods</a></li>
+                        </ul>
+                        <style>
+                            #productDropdown:hover > .dropdown-menu {
+                                display: block;
+                                margin-top: 0;
+                            }
+                            #productDropdown > .dropdown-menu {
+                                display: none;
+                            }
+                        </style>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'about' %}">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'contact' %}">Contact Us</a>
+                    </li>
+                    {% if request.user.is_authenticated and request.user.is_superuser %}
+                    <li class="nav-item">
+                        <a class="nav-link text-success fw-bold" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+                    </li>
+                    {% endif %}
+                    {% endblock %}
+                </ul>
+
+                <form class="d-flex" role="search" action="/search">
+                    <input class="form-control me-2" type="search" placeholder="Search" name="search" aria-label="Search">
+                    <button class="btn btn-outline-primary" type="submit">Search</button>
+                </form>
+
+                <ul class="navbar-nav mb-2 mb-lg-0 ms-3">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fa-regular fa-user"></i> {{request.user}}
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="profileDropdown">
+                            {% if request.user.is_authenticated and request.user.is_superuser %}
+                            <li><a class="dropdown-item" href="{% url 'admin_dashboard' %}">Admin Dashboard</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="{% url 'profile' %}">Profile</a></li>
+                            <li><a class="dropdown-item" href="{% url 'passwordchange' %}">Change Password</a></li>
+                            <li><a class="dropdown-item" href="/logout/">Logout</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item mx-2">
+                        <a href="{% url 'showcart' %}" class="nav-link">
+                            <span class="badge bg-danger">{% if totalitem > 0 %}{{totalitem}}{% endif %}</span>
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </a>
+                    </li>
+
+                    <li class="nav-item mx-2">
+                        <a href="{% url 'showwishlist' %}" class="nav-link">
+                            <span class="badge bg-danger">{% if wishlist_count > 0 %}{{ wishlist_count}}{% endif %}</span>
+                            <i class="fa fa-heart"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</header>
+
+<main>
+    {% block banner-slider %}{% endblock banner-slider %}
+    {% block information %}{% endblock information %}
+    {% block main-content %}{% endblock main-content %}
+    {% block payment-gateway %}{% endblock payment-gateway %}
+</main>
+
+<footer class="text-center">
+    <div class="container">
+        <p>&copy; 2025 Electra by Alvi. All Rights Reserved.</p>
+    </div>
+</footer>
+
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="{% static 'js/owl.carousel.min.js' %}"></script>
+<script src="{% static 'js/myscripts.js' %}"></script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+
+{% load static %}
+<div id="loading-screen">
+
+    <img src="{% static 'images/load1.gif' %}" alt="Loading..." class="loading-logo">
+    <style>
+      #loading-screen {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    /* default */
+    /* background: #ffffff;  default */
+    /* Green */
+    background: #6dbd88;  
+    /* Purple  */
+    /* background: #9575cd; */
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: opacity 0.5s ease;
+    opacity: 1;
+  }
+  
+  .loading-logo {
+    width: 420px;
+    height: 420px;
+  }
+  
+    </style>
+  <script>
+      window.addEventListener("load", function () {
+        // Delay hiding the loading screen by 2 seconds (2000 ms)
+        setTimeout(function () {
+    const loader = document.getElementById("loading-screen");
+    loader.style.opacity = "0";
+    setTimeout(() => loader.style.display = "none", 500); // hide after fade
+  }, 10);//2000
+  
+      });
+    </script>
+    
+  </div>

@@ -1,0 +1,484 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Electra Products{% endblock title %}
+
+{% block main-content %}
+<br>
+<div class="container my-5">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="page-header rounded p-4 text-center">
+                <h2 class="fw-bold mb-0">
+                    {% if category_name %}
+                        <i class="fas fa-leaf me-2"></i>{{ category_name }}
+                    {% else %}
+                        <i class="fas fa-store me-2"></i>All Products
+                    {% endif %}
+                </h2>
+                <p class="text-muted mt-2 mb-0">Discover our premium Gadgets</p>
+            </div>
+        </div>
+    </div>
+    <form method="get" class="mb-4">
+        <div class="row g-3 align-items-center">
+            
+            <div class="col-md-3">
+                <select name="sort_by" class="form-select">
+                    <option value="">Sort by Price</option>
+                    <option value="price_lh">Price: Low to High</option>
+                    <option value="price_hl">Price: High to Low</option>
+                    <option value="rating_hl">Rating: High to Low</option>
+                    <option value="rating_lh">Rating: Low to High</option>
+                </select>
+            </div>
+    
+            <div class="col-md-2">
+                <select name="rating" class="form-select">
+                    <option value="">Min Rating</option>
+                    <option value="4">4★ & up</option>
+                    <option value="3">3★ & up</option>
+                    <option value="2">2★ & up</option>
+                    <option value="1">1★ & up</option>
+                </select>
+            </div>
+    
+            <div class="col-md-2">
+                <select name="stock" class="form-select">
+                    <option value="">Stock</option>
+                    <option value="in">In Stock</option>
+                    <option value="out">Out of Stock</option>
+                </select>
+            </div>
+    
+            <div class="col-md-2">
+                <div class="form-check">
+                    <input type="checkbox" name="discount" value="true" class="form-check-input" id="discountCheck">
+                    <label class="form-check-label" for="discountCheck">Only Discounts</label>
+                </div>
+            </div>
+    
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    Apply Filters
+                </button>
+            </div>
+        </div>
+    </form>
+    
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <div class="category-card border-0">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-list me-2"></i>Categories</h5>
+                </div>
+                <div class="list-group list-group-flush">
+                    <a href="{% url 'category' 'HO' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                        <img src="{% static 'images/cat/1.png' %}" alt="Logo" style="width: 60px; height: auto; border-radius: 12px;">
+                        <span>Laptop</span>
+                    </a>
+                    <a href="{% url 'category' 'HS' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                        <img src="{% static 'images/cat/2.png' %}" alt="Logo" style="width: 60px; height: auto; border-radius: 12px;">
+                        <span>Mobile Phone</span>
+                    </a>
+                    <a href="{% url 'category' 'HM' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                        <img src="{% static 'images/cat/3.png' %}" alt="Logo" style="width: 60px; height: auto; border-radius: 12px;">
+                        <span>Tablet</span>
+                    </a>
+                    <a href="{% url 'category' 'HC' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                        <img src="{% static 'images/cat/4.png' %}" alt="Logo" style="width: 60px; height: auto; border-radius: 12px;">
+                        <span>Smartwatch</span>
+                    </a>
+                    <a href="{% url 'category' 'SH' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                        <img src="{% static 'images/cat/5.png' %}" alt="Logo" style="width: 60px; height: auto; border-radius: 12px;">
+                        <span>Camera</span>
+                    </a>
+                    <a href="{% url 'category' 'HB' %}" class="list-group-item list-group-item-action d-flex align-items-center gap-2">
+                        <img src="{% static 'images/cat/6.png' %}" alt="Logo" style="width: 60px; height: auto; border-radius: 12px;">
+                        <span>Ear Pods</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        
+
+        
+        
+        <div class="col-lg-9">
+            <div class="row">
+                {% for prod in product %}
+                <div class="col-md-4 mb-4">
+                    <div class="card product-card h-100 border-0">
+                        <div class="position-relative">
+                            <a href="{% url 'product-detail' prod.id %}">
+                                <img src="{{ prod.product_image.url }}" 
+                                    class="card-img-top rounded-top" 
+                                    alt="{{ prod.title }}">
+                            </a>
+                            {% if prod.discounted_price < prod.selling_price %}
+                            <div class="sale-badge">
+                                {% with discount=prod.selling_price|floatformat:0|slugify|add:"0"|stringformat:"i" %}
+                                {% with discounted=prod.discounted_price|floatformat:0|slugify|add:"0"|stringformat:"i" %}
+                                {% with percentage=discount|add:"-"|add:discounted|add:"*100/"|add:discount %}
+                                {{ percentage|floatformat:0 }}% OFF
+                                {% endwith %}
+                                {% endwith %}
+                                {% endwith %}
+                            </div>
+                            {% endif %} 
+                        </div>
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-2">
+                                <a href="{% url 'product-detail' prod.id %}" class="text-decoration-none">{{ prod.title }}</a>
+                            </h5>
+                            <div class="ratings mb-2">
+                                {% for i in "12345" %}
+                                    {% if prod.average_rating|floatformat:1 >= i %}
+                                        <i class="fas fa-star text-warning"></i>
+                                    {% elif prod.average_rating|floatformat:1 >= i|add:"-0.5" %}
+                                        <i class="fas fa-star-half-alt text-warning"></i>
+                                    {% else %}
+                                        <i class="far fa-star text-warning"></i>
+                                    {% endif %}
+                                {% endfor %}
+                                <span class="ms-2 text-muted">({{ prod.average_rating|floatformat:1 }})</span>
+                            </div>
+                            
+                            <div class="price-section">
+                                <span class="discount-price">₹{{ prod.discounted_price }}/-</span>
+                                {% if prod.discounted_price < prod.selling_price %}
+                                <small class="original-price">₹{{ prod.selling_price }}/-</small>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a href="{% url 'product-detail' prod.id %}" class="btn view-btn">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center py-5">
+                    <div class="empty-state">
+                        <i class="fas fa-box-open" style="font-size: 5rem;"></i>
+                        <h4 class="mt-3">No Products Found</h4>
+                        <p class="text-muted">We don't have any products in this category yet.</p>
+                        <a href="/" class="btn browse-btn mt-2">
+                            <i class="fas fa-arrow-left me-2"></i>Browse Other Categories
+                        </a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Main colors */
+    :root {
+        --primary-color: #088f8f;  /* Teal */
+        --primary-light: #e0f7fa; /* Lightest Blue */
+        --secondary-color: #b0e0e6;  /* Powder Blue */
+        --text-color: #0c3001;          /* Dark Green */
+        --light-bg: #f0f8ff;       /* Very Light Blue */
+        --accent-color: #ff6347;      /* Tomato */
+        --border-radius: 10px;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --shadow-light: rgba(0, 0, 0, 0.05);
+    }
+    
+    body{
+        font-family: 'Arial', sans-serif;
+    }
+
+    /* Page header */
+    .page-header {
+        background-color: var(--primary-light);
+        color: var(--text-color);
+        box-shadow: 0 2px 4px var(--shadow-light);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+    }
+    
+    .page-header h2 {
+        color: var(--text-color);
+        font-weight: bold;
+        margin-bottom: 1rem;
+        font-size: 2rem;
+    }
+    
+    .page-header p {
+        color: #666;
+        font-size: 1.1rem;
+    }
+    
+    /* Category sidebar */
+    .category-card {
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: 0 4px 8px var(--shadow-color);
+        border: 1px solid var(--secondary-color);
+        /*height: fit-content;  Remove fixed height, let content define it */
+    }
+    
+    .category-card .card-header {
+        background-color: var(--primary-light);
+        color: var(--text-color);
+        padding: 1.2rem;
+        border-bottom: 1px solid var(--secondary-color);
+    }
+     .category-card .card-header h5{
+        font-size: 1.4rem;
+        font-weight: bold;
+    }
+    
+    .list-group-item {
+        padding: 1rem;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        border-bottom: 1px solid var(--secondary-color);
+    }
+    
+    .list-group-item:last-child{
+        border-bottom: none;
+    }
+    
+    .list-group-item:hover {
+        background-color: #f8f8f8;
+        transform: translateX(5px);
+    }
+    
+    .list-group-item.active {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+    
+    .list-group-item .badge {
+        background-color: rgba(0, 0, 0, 0.1);
+        color: var(--text-color);
+        transition: background-color 0.3s ease;
+    }
+    
+    .list-group-item:hover .badge {
+        background-color: var(--primary-color);
+        color: white;
+    }
+    
+    .list-group-item.active .badge {
+        background-color: white;
+        color: var(--primary-color);
+    }
+    
+     .list-group-item img{
+        border: 2px solid var(--primary-color);
+    }
+    
+    /* Product cards */
+    .product-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: var(--border-radius);
+        box-shadow: 0 4px 8px var(--shadow-color);
+        border: 1px solid var(--secondary-color);
+        background-color: white;
+    }
+    
+    .product-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .product-card .card-img-top {
+        height: 250px;
+        object-fit: cover;
+        border-radius: var(--border-radius) var(--border-radius) 0 0;
+        transition: transform 0.5s ease;
+    }
+    
+    .product-card:hover .card-img-top {
+        transform: scale(1.03);
+    }
+    
+    .sale-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background-color: var(--accent-color);
+        color: white;
+        padding: 0.5rem;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+    
+    /* Card body */
+    .card-title a {
+        color: var(--text-color);
+        font-weight: 600;
+        transition: color 0.2s ease;
+        font-size: 1.2rem;
+    }
+    
+    .card-title a:hover {
+        color: var(--primary-color);
+    }
+    
+    .ratings {
+        color: #ffc107;
+        margin: 0.5rem 0;
+    }
+    
+    .price-section {
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center; /* Center the prices */
+    }
+    
+    .discount-price {
+        font-weight: bold;
+        color: var(--accent-color);
+        font-size: 1.2rem;
+        margin-right: 0.5rem; /* Add some space between prices */
+    }
+    
+    .original-price {
+        text-decoration: line-through;
+        color: #6c757d;
+        font-size: 1rem;
+    }
+    
+    /* Card footer */
+    .card-footer {
+        background-color: transparent;
+        border-top: none;
+        padding: 1.2rem;
+    }
+    
+    .view-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.5rem 1.5rem;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    
+    .view-btn:hover {
+        background-color: #046868;
+        transform: translateY(-3px);
+    }
+    
+    /* Empty state */
+    .empty-state {
+        padding: 3rem;
+        color: #6c757d;
+        text-align: center;
+        border: 1px solid var(--secondary-color);
+        border-radius: var(--border-radius);
+        background-color: white;
+    }
+    
+    .empty-state i {
+        color: #dee2e6;
+        font-size: 4rem;
+    }
+    
+    .empty-state h4 {
+        margin: 1.5rem 0;
+        font-size: 1.5rem;
+        color: var(--text-color);
+    }
+    
+    .empty-state p{
+        font-size: 1.1rem;
+    }
+    
+    .browse-btn {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        border-radius: 5px;
+        font-weight: bold;
+    }
+    
+    .browse-btn:hover {
+        background-color: #046868;
+        transform: translateY(-3px);
+    }
+
+    /* Filter form */
+    form {
+        background-color: white;
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        box-shadow: 0 2px 5px var(--shadow-light);
+        margin-bottom: 2rem;
+        border: 1px solid var(--secondary-color);
+    }
+    
+    form .form-select,
+    form .form-control {
+        border-color: var(--secondary-color);
+        border-radius: 5px;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+    }
+    
+    form .form-select:focus,
+    form .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(8, 143, 143, 0.1);
+    }
+    
+    form .form-check-input:checked {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+    
+    form .form-check-input:focus {
+        box-shadow: 0 0 0 3px rgba(8, 143, 143, 0.1);
+    }
+    
+
+    @media (max-width: 992px) {
+        .col-lg-9{
+            margin-top: 2rem;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .page-header {
+            padding: 1.5rem;
+        }
+        .page-header h2{
+            font-size: 1.75rem;
+        }
+        .product-card .card-img-top {
+            height: 200px;
+        }
+        form .col-md-3,
+        form .col-md-2,
+        form .col-md-4{
+            margin-bottom: 1rem;
+        }
+    }
+    
+    @media (max-width: 576px) {
+        .product-card .card-img-top {
+            height: 180px;
+        }
+        .empty-state{
+            padding: 2rem;
+        }
+        .empty-state i{
+            font-size: 3rem;
+        }
+    }
+</style>
+{% endblock main-content %}
