@@ -354,7 +354,7 @@ class CheckoutView(View):
             value = p.quantity * p.product.discounted_price
             famount += value
         
-        totalamount = famount + 40
+        totalamount = famount 
         razorpayamount = int(totalamount * 100)
 
         # Fake payment order simulation

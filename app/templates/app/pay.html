@@ -5,7 +5,7 @@
 {% block main-content %}
 <div class="text-center mt-5">
   <h2>Review Your Order</h2>
-  <p>Total Amount: <b>₹{{ amt }}</b></p>
+  <p>Total Amount: <b>₹<span id="display-amount"></span></b></p>
   <button class="btn btn-primary mt-3" onclick="openModal()">Proceed to Payment</button>
 </div>
 
@@ -18,7 +18,7 @@
     <form method="post" action="{% url 'orders' %}" id="payment-form">
       {% csrf_token %}
       <input type="hidden" name="order_id" value="{{ order_id }}">
-      <input type="hidden" name="amount" value="{{ amt }}">
+      <input type="hidden" name="amount" id="amount-hidden" value="{{ amt }}">
       <input type="hidden" name="cust_id" value="{{ user.customer_set.first.id }}">
 
       <div class="mb-3">
@@ -46,11 +46,21 @@
 
       <!-- UPI Fields -->
       <div id="upi-fields" style="display: none;">
-        <input type="text" class="form-control mb-2" name="upi_id" placeholder="yourname@bank">
+        <input type="text" class="form-control mb-2" name="upi_id" id="upi-id" placeholder="yourname@bank">
       </div>
 
-      <button type="submit" class="btn btn-success w-100 mt-3">Pay ₹{{ amt }}</button>
+      <button type="submit" class="btn btn-success w-100 mt-3" id="pay-btn">Pay</button>
     </form>
+  </div>
+</div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="modal-overlay" style="display: none;">
+  <div class="modal-content text-center">
+    <h4>Processing Payment...</h4>
+    <div class="progress mt-3">
+      <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%;"></div>
+    </div>
   </div>
 </div>
 
@@ -109,6 +119,53 @@ methodSelector.addEventListener('change', () => {
   const selected = methodSelector.value;
   cardFields.style.display = selected === 'card' ? 'block' : 'none';
   upiFields.style.display = selected === 'upi' ? 'block' : 'none';
+});
+
+// Amount formatter
+document.addEventListener('DOMContentLoaded', () => {
+  const rawAmt = parseFloat(document.getElementById('amount-hidden').value);
+  const displayAmt = (rawAmt > 1000) ? (rawAmt / 100).toFixed(2) : rawAmt.toFixed(2);
+  document.getElementById('display-amount').textContent = displayAmt;
+  document.getElementById('pay-btn').textContent = `Pay ₹${displayAmt}`;
+});
+
+// Form validation & loading overlay
+document.getElementById('payment-form').addEventListener('submit', function(e) {
+  const method = methodSelector.value;
+  let isValid = true;
+
+  if (method === 'card') {
+    const cardNumber = this.card_number.value.trim();
+    const expiry = this.expiry.value.trim();
+    const cvv = this.cvv.value.trim();
+    const name = this.name.value.trim();
+    if (!/^\d{16}$/.test(cardNumber) || !/^\d{2}\/\d{2}$/.test(expiry) || !/^\d{3}$/.test(cvv) || name === "") {
+      alert("Please enter valid card details.");
+      isValid = false;
+    }
+  }
+
+  if (method === 'upi') {
+    const upiId = document.getElementById('upi-id').value.trim();
+    if (!/^[\w.-]+@[a-zA-Z]{2,}$/.test(upiId)) {
+      alert("Enter a valid UPI ID (e.g. name@bank)");
+      isValid = false;
+    }
+  }
+
+  if (!method || !isValid) {
+    e.preventDefault();
+    return;
+  }
+
+  // Show loading overlay
+  e.preventDefault(); // stop actual submit
+  document.getElementById('paymentModal').style.display = 'none';
+  document.getElementById('loadingOverlay').style.display = 'block';
+
+  setTimeout(() => {
+    this.submit(); // submit after delay
+  }, 2000);
 });
 </script>
 {% endblock %}
