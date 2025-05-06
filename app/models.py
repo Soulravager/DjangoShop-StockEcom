@@ -12,12 +12,15 @@ STATE_CHOICES = (
 )
 
 CATEGORY_CHOICES=(
-    ('HO', 'LapTop'),
-    ('HS', 'Mobile Phone'),
-    ('HM', 'Tablet'),
-    ('HC', 'Smartwatch'),
-    ('SH', 'Camera'),
-    ('HB', 'ear pods'),
+    ('HO', 'MILK'),
+    ('HS', 'Curd'),
+    ('HM', 'Ghee'),
+    ('HC', 'IceBar'),
+    ('SH', 'Kulfi'),
+    ('HB', 'Milk Shake'),
+    ('CH', 'Cheese'),
+    ('PA', 'Paneer'),
+    ('LA', 'lassi'),
 )
 
 

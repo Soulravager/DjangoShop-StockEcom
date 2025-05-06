@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-    <title>Electra | {% block title %}{% endblock title %}Document</title>
+    <title>Dairy Daily | {% block title %}{% endblock title %}Document</title>
 
     <style>
         body {
@@ -156,14 +156,17 @@
                     </li>
                     <li class="nav-item dropdown mx-2" id="productDropdown">
                         <a class="nav-link dropdown-toggle" href="{% url 'category' 'HO' %}" id="navbarDropdown">Products</a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'category' 'HO' %}">LapTop</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'HS' %}">Mobile Phone</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'HM' %}">Tablet</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'HC' %}">Smartwatch</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'SH' %}">Camera</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'HB' %}">Ear Pods</a></li>
-                        </ul>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HO' %}">MILK</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HS' %}">Curd</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HM' %}">Ghee</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HC' %}">Ice Bar</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'SH' %}">Kulfi</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HB' %}">Milk Shake</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'CH' %}">Cheese</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'PA' %}">Paneer</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'LA' %}">lassi</a></li>
+                       </ul>
                         <style>
                             #productDropdown:hover > .dropdown-menu {
                                 display: block;
@@ -236,7 +239,7 @@
 
 <footer class="text-center">
     <div class="container">
-        <p>&copy; 2025 Electra by Alvi. All Rights Reserved.</p>
+        <p>&copy; 2025 Milk Stock by Aryan. All Rights Reserved.</p>
     </div>
 </footer>
 

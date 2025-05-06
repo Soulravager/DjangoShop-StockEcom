@@ -258,14 +258,17 @@
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Products
                         </a>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="{% url 'category' 'HO' %}">LapTop</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'HS' %}">Mobile Phone</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'HM' %}">Tablet</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'HC' %}">Smartwatch</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'SH' %}">Camera</a></li>
-                            <li><a class="dropdown-item" href="{% url 'category' 'HB' %}">ear pods</a></li></li>
-                        </ul>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HO' %}">MILK</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HS' %}">Curd</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HM' %}">Ghee</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HC' %}">Ice Bar</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'SH' %}">Kulfi</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'HB' %}">Milk Shake</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'CH' %}">Cheese</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'PA' %}">Paneer</a></li>
+                           <li><a class="dropdown-item custom-dropdown-item" href="{% url 'category' 'LA' %}">lassi</a></li>
+                       </ul>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-white" href="{% url 'about' %}">About Us</a>

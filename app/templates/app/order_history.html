@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+{% extends 'app/base.html' %}<!DOCTYPE html>
+{% block main-content %}
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -121,68 +122,100 @@
       color: #FF9800;
     }
   </style>
-</head>
-<body>
-  <h2>Your Orders</h2>
+</head><body><br><br><br><br><br><br>
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-12 mb-4">
+        <h3 class="border-bottom pb-3"> 
+          <i class="fa-regular fa-user me-2"></i>Welcome <span class="text-capitalize fw-bold">{{request.user}}</span>
+        </h3>
+      </div>
 
-  {% for order in orders %}
-  <div class="order-container">
-    <h3>{{ order.product }}</h3>
-    <p>Status: {{ order.delivery_status }}</p>
-
-    <!-- Active Orders -->
-    <div id="open-{{ order.id }}" style="display: none;">
-      <div class="tracking">
-        <div class="line"></div>
-        <div class="line-filled" style="width: {{ order.progress }}%;"></div>
-
-        <div class="step">
-          <div class="dot {% if order.delivery_status in 'Pending Accepted Packed On The Way Delivered' %}active{% endif %}"></div>
-          <div class="label">Pending</div>
-        </div>
-        <div class="step">
-          <div class="dot {% if order.delivery_status in 'Accepted Packed On The Way Delivered' %}active{% endif %}"></div>
-          <div class="label">Accepted</div>
-        </div>
-        <div class="step">
-          <div class="dot {% if order.delivery_status in 'Packed On The Way Delivered' %}active{% endif %}"></div>
-          <div class="label">Packed</div>
-        </div>
-        <div class="step">
-          <div class="dot {% if order.delivery_status in 'On The Way Delivered' %}active{% endif %}"></div>
-          <div class="label">On The Way</div>
-        </div>
-        <div class="step">
-          <div class="dot {% if order.delivery_status == 'Delivered' %}active{% endif %}"></div>
-          <div class="label">Delivered</div>
+      <div class="col-md-3 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <i class="fa-solid fa-gear me-2"></i>Account Settings
+          </div>
+          <div class="list-group list-group-flush">
+            <a href="{% url 'profile' %}" class="list-group-item list-group-item-action active">
+              <i class="fa-regular fa-user me-2"></i>Profile
+            </a>
+            <a href="{% url 'order_history' %}" class="list-group-item list-group-item-action">
+              <i class="fa-solid fa-location-dot me-2"></i>Order History
+            </a>
+            <a href="{% url 'address' %}" class="list-group-item list-group-item-action">
+              <i class="fa-solid fa-location-dot me-2"></i>Address
+            </a>
+            <a href="{% url 'passwordchange' %}" class="list-group-item list-group-item-action">
+              <i class="fa-solid fa-key me-2"></i>Change Password
+            </a>
+          </div>
         </div>
       </div>
 
-      {% if order.delivery_status != "Delivered" %}
-      <form method="post" action="{% url 'cancel-order' order.id %}">
-        {% csrf_token %}
-        <button type="submit" class="cancel-btn">Cancel Order</button>
-      </form>
-      {% endif %}
-    </div>
+      <div class="col-md-9">
+        <h2>Your Orders</h2>
 
-    <!-- Cancelled Orders -->
-    <div id="cancelled-{{ order.id }}" style="display: none;" class="cancelled">
-      <div class="tracking">
-        <div class="line"></div>
+        {% for order in orders %}
+        <div class="order-container">
+          <h3>{{ order.product }}</h3>
+          <p>Status: {{ order.delivery_status }}</p>
 
-        <div class="step">
-          <div class="dot cancelled"></div>
-          <div class="label">Pending</div>
+          <!-- Active Orders -->
+          <div id="open-{{ order.id }}" style="display: none;">
+            <div class="tracking">
+              <div class="line"></div>
+              <div class="line-filled" style="width: {{ order.progress }}%;"></div>
+
+              <div class="step">
+                <div class="dot {% if order.delivery_status in 'Pending Accepted Packed On The Way Delivered' %}active{% endif %}"></div>
+                <div class="label">Pending</div>
+              </div>
+              <div class="step">
+                <div class="dot {% if order.delivery_status in 'Accepted Packed On The Way Delivered' %}active{% endif %}"></div>
+                <div class="label">Accepted</div>
+              </div>
+              <div class="step">
+                <div class="dot {% if order.delivery_status in 'Packed On The Way Delivered' %}active{% endif %}"></div>
+                <div class="label">Packed</div>
+              </div>
+              <div class="step">
+                <div class="dot {% if order.delivery_status in 'On The Way Delivered' %}active{% endif %}"></div>
+                <div class="label">On The Way</div>
+              </div>
+              <div class="step">
+                <div class="dot {% if order.delivery_status == 'Delivered' %}active{% endif %}"></div>
+                <div class="label">Delivered</div>
+              </div>
+            </div>
+
+            {% if order.delivery_status != "Delivered" %}
+            <form method="post" action="{% url 'cancel-order' order.id %}">
+              {% csrf_token %}
+              <button type="submit" class="cancel-btn">Cancel Order</button>
+            </form>
+            {% endif %}
+          </div>
+
+          <!-- Cancelled Orders -->
+          <div id="cancelled-{{ order.id }}" style="display: none;" class="cancelled">
+            <div class="tracking">
+              <div class="line"></div>
+              <div class="step">
+                <div class="dot cancelled"></div>
+                <div class="label">Pending</div>
+              </div>
+              <div class="step">
+                <div class="dot cancelled"></div>
+                <div class="label">Cancelled</div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="step">
-          <div class="dot cancelled"></div>
-          <div class="label">Cancelled</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  {% endfor %}
+        {% endfor %}
+      </div> <!-- end of col-md-9 -->
+    </div> <!-- end of row -->
+  </div> <!-- end of container -->
 
   <!-- JS to toggle open/cancelled div -->
   <script>
@@ -198,3 +231,4 @@
   </script>
 </body>
 </html>
+{% endblock main-content %}
